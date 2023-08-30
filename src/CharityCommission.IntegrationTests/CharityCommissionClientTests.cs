@@ -1,32 +1,23 @@
 ﻿using FluentAssertions;
-using Serilog;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace CharityCommission.IntegrationTests;
 
-public class CharityCommissionClientTests
+public class CharityCommissionClientTests : IClassFixture<Fixture>
 {
-    public CharityCommissionClientTests(ITestOutputHelper testOutputHelper)
+    private readonly Fixture _fixture;
+
+    public CharityCommissionClientTests(Fixture fixture)
     {
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Verbose()
-            .WriteTo.TestOutput(testOutputHelper)
-            .CreateLogger();
+        _fixture = fixture;
     }
 
-    [Fact(Skip = "Requires API Key")]
+    [Fact(Skip = "Missing Api Key")]
     public async Task Can_get_Charity()
     {
-        var settings = new CharityCommissionSettings
-        {
-            SubscriptionKey = ""
-        };
-        
         const string number = "235351";
         
-        var client = new CharityCommissionClient(settings);
-        var charity = await client.GetCharityAsync(number);
+        var charity = await _fixture.Client.GetCharityAsync(number);
 
         charity.Should().NotBeNull();
         charity.Number.Should().Be(number);
