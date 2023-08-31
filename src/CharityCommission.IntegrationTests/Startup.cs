@@ -11,8 +11,7 @@ public class Startup
     {
         var configuration = GetConfigurationRoot();
         var section = configuration.GetSection(typeof(CharityCommissionClient).Namespace);
-        var settings = new CharityCommissionSettings();
-        section.Bind(settings);
+        var settings = section.Get<CharityCommissionSettings>();
         
         services.AddSingleton(settings);
         services.AddSingleton<ITestOutputHelper, TestOutputHelper>();
