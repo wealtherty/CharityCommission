@@ -12,12 +12,12 @@ public class CharityCommissionClientTests : IClassFixture<Fixture>
         _fixture = fixture;
     }
 
-    [Fact(Skip = "Missing Api Key")]
+    [Fact(Skip = Fixture.ReasonToSkip)]
     public async Task Can_get_Charity()
     {
         const string number = "235351";
         
-        var charity = await _fixture.Client.GetCharityAsync(number);
+        var charity = await _fixture.GetClient().GetCharityAsync(number);
 
         charity.Should().NotBeNull();
         charity.Number.Should().Be(number);

@@ -1,24 +1,36 @@
 using Serilog;
-using Xunit.Abstractions;
+using Serilog.Core;
+using Xunit.DependencyInjection;
 
 namespace CharityCommission.IntegrationTests;
 
 public class Fixture
 {
-    public CharityCommissionClient Client { get; }
+    private readonly ITestOutputHelperAccessor _testOutputHelperAccessor;
+    private readonly CharityCommissionClient _client;
 
-    public Fixture(ITestOutputHelper testOutputHelper, CharityCommissionClient client)
+    public const string ReasonToSkip = "Requires API key";
+    
+    public Fixture(CharityCommissionClient client, ITestOutputHelperAccessor testOutputHelperAccessor)
     {
-        Client = client;
-
-        InitialiseLogging(testOutputHelper);
+        _client = client;
+        _testOutputHelperAccessor = testOutputHelperAccessor;
+    }
+    
+    public CharityCommissionClient GetClient()
+    {
+        Initialise();
+        return _client;
     }
 
-    private static void InitialiseLogging(ITestOutputHelper testOutputHelper)
+    private void Initialise()
     {
+        if (Log.Logger != Logger.None) return;
+        
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Verbose()
-            .WriteTo.TestOutput(testOutputHelper)
+            .WriteTo.TestOutput(_testOutputHelperAccessor.Output)
             .CreateLogger();
     }
+    
 }
