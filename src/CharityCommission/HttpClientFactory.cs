@@ -1,28 +1,24 @@
 ﻿namespace CharityCommission;
 
-public class HttpClientFactory
+public static class HttpClientFactory
 {
-    private readonly CharityCommissionSettings _settings;
-
-    public HttpClientFactory(CharityCommissionSettings settings)
+    public static ThreadLocal<HttpClient> Create(CharityCommissionSettings settings)
     {
-        _settings = settings;
-    }
+        return new ThreadLocal<HttpClient>(() =>
+        {
+            if (string.IsNullOrEmpty(settings.SubscriptionKey))
+            {
+                throw new Exception(
+                    $"{nameof(CharityCommissionSettings.SubscriptionKey)} isn't populated.  Check {nameof(CharityCommissionSettings)}");
+            }
 
-    public HttpClient Create()
-    {
-        if (string.IsNullOrEmpty(_settings.SubscriptionKey))
-        {
-            throw new Exception(
-                $"{nameof(CharityCommissionSettings.SubscriptionKey)} isn't populated.  Check {nameof(CharityCommissionSettings)}");
-        }
-        
-        var httpClient = new HttpClient
-        {
-            BaseAddress = new Uri(_settings.Uri)
-        };
-        httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.SubscriptionKey);
-        
-        return httpClient; 
+            var httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(settings.Uri)
+            };
+            httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", settings.SubscriptionKey);
+
+            return httpClient;
+        });
     }
 }
