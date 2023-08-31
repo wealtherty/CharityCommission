@@ -17,11 +17,7 @@ public class CharityCommissionClient : IDisposable
     {
         Log.Debug("Getting Charity - Number: {Number}", number);
         
-        var response = await _httpClient.Value.GetAsync($"/register/api/charitydetails/{number}/0", cancellationToken).ConfigureAwait(false);
-        
-        response.EnsureSuccessStatusCode();
-
-        var charity = await response.Content.ReadAsJsonAsync<Charity>().ConfigureAwait(false);
+        var charity  = await _httpClient.Value.GetResourceAsync<Charity>($"/register/api/charitydetails/{number}/0", cancellationToken).ConfigureAwait(false);
         
         Log.Debug("Got Charity - Number: {Number}, Charity: {@Charity}", number, charity);
         
