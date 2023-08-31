@@ -9,14 +9,10 @@ public class CharityCommissionClient : IDisposable
 
     public CharityCommissionClient(CharityCommissionSettings settings) : this(HttpClientFactory.Create(settings))
     {
-        
     }
 
-    private CharityCommissionClient(ThreadLocal<HttpClient> httpClient)
-    {
-        _httpClient = httpClient;
-    }
-    
+    private CharityCommissionClient(ThreadLocal<HttpClient> httpClient) => _httpClient = httpClient;
+
     public async Task<Charity> GetCharityAsync(string number, CancellationToken cancellationToken = default)
     {
         Log.Debug("Getting Charity - Number: {Number}", number);
