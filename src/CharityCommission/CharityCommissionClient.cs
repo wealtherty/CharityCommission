@@ -5,22 +5,22 @@ namespace CharityCommission;
 
 public class CharityCommissionClient
 {
-    private readonly HttpClient _httpClient;
+    private readonly Func<HttpClient> _httpClientFunc;
 
-    public CharityCommissionClient(CharityCommissionSettings settings) : this(new HttpClientFactory(settings).Create())
+    public CharityCommissionClient(CharityCommissionSettings settings) : this(() => new HttpClientFactory(settings).Create())
     {
     }
 
-    private CharityCommissionClient(HttpClient httpClient)
+    private CharityCommissionClient(Func<HttpClient> httpClientFunc)
     {
-        _httpClient = httpClient;
+        _httpClientFunc = httpClientFunc;
     }
 
     public async Task<Charity> GetCharityAsync(string number, CancellationToken cancellationToken = default)
     {
         Log.Debug("Getting Charity - Number: {Number}", number);
         
-        var response = await _httpClient.GetAsync($"/register/api/charitydetails/{number}/0", cancellationToken).ConfigureAwait(false);
+        var response = await _httpClientFunc().GetAsync($"/register/api/charitydetails/{number}/0", cancellationToken).ConfigureAwait(false);
         
         response.EnsureSuccessStatusCode();
 

@@ -12,7 +12,7 @@ public class CharityCommissionClientTests : IClassFixture<Fixture>
         _fixture = fixture;
     }
 
-    [Fact(Skip = Fixture.ReasonToSkip)]
+    [Fact]
     public async Task Can_get_Charity()
     {
         const string number = "235351";

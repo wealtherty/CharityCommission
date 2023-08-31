@@ -11,6 +11,12 @@ public class HttpClientFactory
 
     public HttpClient Create()
     {
+        if (string.IsNullOrEmpty(_settings.SubscriptionKey))
+        {
+            throw new Exception(
+                $"{nameof(CharityCommissionSettings.SubscriptionKey)} isn't populated.  Check {nameof(CharityCommissionSettings)}");
+        }
+        
         var httpClient = new HttpClient
         {
             BaseAddress = new Uri(_settings.Uri)

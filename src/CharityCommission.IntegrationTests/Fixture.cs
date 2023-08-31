@@ -8,8 +8,6 @@ public class Fixture
 {
     private readonly ITestOutputHelperAccessor _testOutputHelperAccessor;
     private readonly CharityCommissionClient _client;
-
-    public const string ReasonToSkip = "Requires API key";
     
     public Fixture(CharityCommissionClient client, ITestOutputHelperAccessor testOutputHelperAccessor)
     {
