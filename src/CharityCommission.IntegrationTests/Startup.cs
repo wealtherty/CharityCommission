@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace CharityCommission.IntegrationTests;
 
@@ -9,12 +7,17 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        var configuration = GetConfigurationRoot();
-        var section = configuration.GetSection(typeof(CharityCommissionClient).Namespace);
-        var settings = section.Get<CharityCommissionSettings>();
+        services.AddSingleton(_ => new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", false, false)
+            .AddUserSecrets(typeof(Startup).Assembly)
+            .Build());
         
-        services.AddSingleton(settings);
-        services.AddSingleton<ITestOutputHelper, TestOutputHelper>();
+        services.AddSingleton(provider =>
+        {
+            var configuration = provider.GetRequiredService<IConfigurationRoot>();
+            var section = configuration.GetSection(typeof(CharityCommissionClient).Namespace);
+            return section.Get<CharityCommissionSettings>();
+        });
         services.AddSingleton(provider =>
         {
             var settings = provider.GetRequiredService<CharityCommissionSettings>();
@@ -23,13 +26,4 @@ public class Startup
         });
         services.AddSingleton<Fixture>();
     }
-    
-    private static IConfigurationRoot GetConfigurationRoot()
-    {
-        return new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", false, false)
-            .AddUserSecrets(typeof(Startup).Assembly)
-            .Build();
-    }
-
 }
